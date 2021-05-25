@@ -37,5 +37,6 @@ exports.getAllProfiles = async () => {
 };
 
 exports.editProfile = async (id, userDetails) => {
+  userDetails.password = await encryptPassword(userDetails.password);
   await userRepository.updateUser(id, userDetails);
 };
