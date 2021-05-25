@@ -9,7 +9,7 @@ exports.findAllPosts = async () => {
       {
         model: Comment,
         attributes: ["id", "comment"],
-        include: [{ model: User, attributes: ["name"] }],
+        include: { model: User, attributes: ["name"] },
       },
     ],
   });
@@ -22,7 +22,7 @@ exports.findPostById = async (id) => {
       {
         model: Comment,
         attributes: ["id", "comment"],
-        include: [{ model: User, attributes: ["name"] }],
+        include: { model: User, attributes: ["name"] },
       },
     ],
   });

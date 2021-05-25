@@ -23,3 +23,12 @@ exports.findCommentById = async (id) => {
 exports.insertComment = async (comment) => {
   return await Comment.create(comment);
 };
+
+// TODO DELETE COMMENT
+exports.deleteComment = async (id) => {
+  const commentId = await Comment.findByPk(id);
+  if (!commentId) {
+    throw new Error("None comment exist with id " + id);
+  }
+  return await Comment.destroy({ where: { id } });
+};
