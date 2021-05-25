@@ -7,6 +7,12 @@ exports.findAllComments = async () => {
   });
 };
 
+exports.findCommentById = async (id) => {
+  return await Comment.findByPk(id, {
+    include: { model: User, attributes: ["name"] },
+  });
+};
+
 exports.insertComment = async (comment) => {
   return await Comment.create(comment);
 };
