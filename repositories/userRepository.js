@@ -17,9 +17,17 @@ exports.insertUser = async (user) => {
 };
 
 exports.updateUser = async (id, userDetails) => {
+  const userId = await User.findOne({ where: { id } });
+  if (!userId) {
+    throw new Error("None user exist with id " + id);
+  }
   return await User.update(userDetails, { where: { id } });
 };
 
 exports.deleteUser = async (id) => {
+  const userId = await User.findOne({ where: { id } });
+  if (!userId) {
+    throw new Error("None user exist with id " + id);
+  }
   return await User.destroy({ where: { id } });
 };

@@ -45,7 +45,7 @@ exports.editProfile = async (id, userDetails) => {
 };
 
 exports.removeUser = async (id) => {
-  if (!id || !password) {
+  if (!id) {
     throw new Error("You must provide user ID");
   }
   await userRepository.deleteUser(id);
