@@ -11,7 +11,7 @@ exports.getComment = async (id) => {
 };
 
 exports.createComment = async (comment) => {
-  if (!comment.content) {
+  if (!comment.comment) {
     throw new Error("You must provide content to comment");
   }
   await commentRepository.insertComment(comment);
