@@ -17,3 +17,11 @@ exports.createPost = async (post) => {
   }
   await postRepository.insertPost(post);
 };
+
+exports.editPost = async (id, postDetails) => {
+  await postRepository.updatePost(id, postDetails);
+};
+
+exports.removePost = async (id) => {
+  await postRepository.deletePost(id);
+};
