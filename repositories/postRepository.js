@@ -2,7 +2,7 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 
 exports.findAllPosts = async () => {
-  return await Post.findAll({ include: User });
+  return await Post.findAll({ include: { model: User, attributes: ["name"] } });
 };
 
 exports.findPostById = async (id) => {
