@@ -37,10 +37,16 @@ exports.getAllProfiles = async () => {
 };
 
 exports.editProfile = async (id, userDetails) => {
+  if (!id || !userDetails) {
+    throw new Error("You must provide user ID and user data");
+  }
   userDetails.password = await encryptPassword(userDetails.password);
   await userRepository.updateUser(id, userDetails);
 };
 
 exports.removeUser = async (id) => {
+  if (!id || !password) {
+    throw new Error("You must provide user ID");
+  }
   await userRepository.deleteUser(id);
 };
