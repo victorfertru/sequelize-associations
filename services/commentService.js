@@ -1,4 +1,5 @@
 const commentRepository = require("../repositories/commentRepository");
+const ERRORS = require("../utils/errorMessages");
 
 exports.getAllPosts = async () => {
   return await commentRepository.findAllComments();
@@ -11,11 +12,11 @@ exports.getComment = async (id) => {
 
 exports.createComment = async (comment) => {
   if (!comment.comment) {
-    throw new Error("You must provide content to comment");
+    throw new HttpError(400, ERRORS.NO_COMMENT_PROVIDED);
   }
   await commentRepository.insertComment(comment);
 };
 
-exports.removeComment = async (id) => {
-  await commentRepository.deleteComment(id);
+exports.removeComment = async (id, userId) => {
+  await commentRepository.deleteComment(id, userId);
 };

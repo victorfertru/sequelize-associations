@@ -5,6 +5,8 @@ const {
   updateSchema,
 } = require("../validations/userValidation");
 const { generateToken } = require("./jwtService");
+const HttpError = require("../utils/httpError");
+const ERRORS = require("../utils/errorMessages");
 
 exports.signup = async (userDetails) => {
   const validation = await insertUserSchema.validateAsync(userDetails);
@@ -15,17 +17,17 @@ exports.signup = async (userDetails) => {
 
 exports.login = async (email, password) => {
   if (!email || !password) {
-    throw new Error("You must provide email and password");
+    throw new HttpError(401, ERRORS.NO_USER_DATA_PROVIDED);
   }
 
   const user = await userRepository.findUserWithPasswordByEmail(email);
 
-  if (!user) throw new Error("Not found user");
+  if (!user) throw new HttpError(401, ERRORS.NO_USER_EXIST);
 
   const encryptedPassword = await encryptPassword(password);
 
   if (user.password !== encryptedPassword) {
-    throw new Error("Your password is incorrect");
+    throw new HttpError(401, ERRORS.INVALID_PASSWORD);
   }
 
   const token = generateToken(user.id, user.email, user.role);
@@ -54,7 +56,7 @@ exports.editProfile = async (id, userDetails) => {
 
 exports.removeUser = async (id) => {
   if (!id) {
-    throw new Error("You must provide user ID");
+    throw new HttpError(400, ERRORS.NO_USER_PROVIDE);
   }
   await userRepository.deleteUser(id);
 };

@@ -1,12 +1,11 @@
 const express = require("express");
 const roleValidation = require("../middleware/roleValidation");
-const userValidation = require("../middleware/userValidation");
 const router = express.Router();
 const postService = require("../services/postService");
 
 //incluimos el middleware para que valide que es un usuario registrado
 // si usamos validación de rol con arrays => roleValidation(["user", "mods"])
-router.get("/all", roleValidation("user"), async (req, res, next) => {
+router.get("/all", roleValidation("mod"), async (req, res, next) => {
   try {
     const posts = await postService.getAllPosts();
     res.status(200).json(posts);
@@ -15,7 +14,7 @@ router.get("/all", roleValidation("user"), async (req, res, next) => {
   }
 });
 
-router.get("/:id", roleValidation(["user", "mods"]), async (req, res, next) => {
+router.get("/:id", roleValidation(["user", "mod"]), async (req, res, next) => {
   try {
     const { id } = req.params;
     const post = await postService.getPost(id);
@@ -25,7 +24,7 @@ router.get("/:id", roleValidation(["user", "mods"]), async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", roleValidation("user"), async (req, res, next) => {
   try {
     await postService.createPost(req.body);
     res.sendStatus(201);
@@ -34,7 +33,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", roleValidation("user"), async (req, res, next) => {
   try {
     const { id } = req.params;
     await postService.editPost(id, req.body);
@@ -44,14 +43,18 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await postService.removePost(id);
-    res.sendStatus(204);
-  } catch (error) {
-    next(error);
+router.delete(
+  "/:id",
+  roleValidation(["user", "mod"]),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await postService.removePost(id);
+      res.sendStatus(204);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 module.exports = router;

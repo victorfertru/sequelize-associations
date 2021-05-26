@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const commentService = require("../services/commentService");
+const roleValidation = require("../middleware/roleValidation");
 
-router.get("/all", async (_, res) => {
+router.get("/all", roleValidation("mod"), async (_, res) => {
   try {
     const comments = await commentService.getAllPosts();
     res.status(200).json(comments);
@@ -11,7 +12,7 @@ router.get("/all", async (_, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", roleValidation("mod"), async (req, res) => {
   try {
     const { id } = req.params;
     const comment = await commentService.getComment(id);
@@ -21,7 +22,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", roleValidation(["user", "mod"]), async (req, res) => {
   try {
     await commentService.createComment(req.body);
     res.sendStatus(201);
@@ -30,10 +31,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", roleValidation(["user", "mod"]), async (req, res) => {
   try {
     const { id } = req.params;
-    await commentService.removeComment(id);
+    const userId = req.user.id;
+    await commentService.removeComment(id, userId);
     res.sendStatus(204);
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -1,10 +1,9 @@
 var express = require("express");
-const adminValidation = require("../middleware/adminValidation");
+const roleValidation = require("../middleware/roleValidation");
 var router = express.Router();
 const userService = require("../services/userService");
-
 //incluimos el middleware para que sólo el user con role "admin" pueda ver todos los usuarios
-router.get("/all", adminValidation, async (req, res) => {
+router.get("/all", roleValidation(), async (req, res) => {
   try {
     const user = await userService.getAllProfiles();
     res.status(200).json(user);
@@ -13,7 +12,7 @@ router.get("/all", adminValidation, async (req, res) => {
   }
 });
 
-router.get("/:email", async (req, res) => {
+router.get("/:email", roleValidation(["mod"]), async (req, res) => {
   try {
     const { email } = req.params;
     const user = await userService.getProfile(email);
@@ -42,7 +41,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.put("/", async (req, res) => {
+router.put("/", roleValidation(["user", "mod"]), async (req, res) => {
   try {
     const { id } = req.user;
     await userService.editProfile(id, req.body);
@@ -52,7 +51,7 @@ router.put("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", roleValidation(), async (req, res) => {
   try {
     const { id } = req.params;
     await userService.removeUser(id);

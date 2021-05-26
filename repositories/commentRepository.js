@@ -1,6 +1,7 @@
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
 const User = require("../models/User");
+const ERRORS = require("../utils/errorMessages");
 
 exports.findAllComments = async () => {
   return await Comment.findAll({
@@ -24,10 +25,10 @@ exports.insertComment = async (comment) => {
   return await Comment.create(comment);
 };
 
-exports.deleteComment = async (id) => {
+exports.deleteComment = async (id, userId) => {
   const commentId = await Comment.findByPk(id);
   if (!commentId) {
-    throw new Error("None comment exist with id " + id);
+    throw new HttpError(400, ERRORS.NO_COMMENT_EXISTS + id);
   }
-  return await Comment.destroy({ where: { id } });
+  return await Comment.destroy({ where: { id, UserId: userId } });
 };

@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const ERRORS = require("../utils/errorMessages");
 
 exports.findAllUsers = async () => {
   return await User.findAll();
@@ -19,7 +20,7 @@ exports.insertUser = async (user) => {
 exports.updateUser = async (id, userDetails) => {
   const userId = await User.findOne({ where: { id } });
   if (!userId) {
-    throw new Error("None user exist with id " + id);
+    throw new HttpError(400, ERRORS.NO_USER_EXIST);
   }
   return await User.update(userDetails, { where: { id } });
 };
@@ -27,7 +28,7 @@ exports.updateUser = async (id, userDetails) => {
 exports.deleteUser = async (id) => {
   const userId = await User.findOne({ where: { id } });
   if (!userId) {
-    throw new Error("None user exist with id " + id);
+    throw new HttpError(400, ERRORS.NO_USER_EXIST);
   }
   return await User.destroy({ where: { id } });
 };
