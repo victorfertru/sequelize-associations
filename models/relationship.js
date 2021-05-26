@@ -19,6 +19,7 @@ const loadModels = () => {
   Comment.belongsTo(User);
   Comment.belongsTo(Post);
 
+  //incluir .sync({force:true}) para eliminar las tablas y crearlas de nuevo
   dbConnection.sync().then(() => console.log("All models loaded"));
 };
 

@@ -1,12 +1,16 @@
 const userRepository = require("../repositories/userRepository");
 const encryptPassword = require("../utils/encryptPassword");
+const {
+  insertUserSchema,
+  updateSchema,
+} = require("../validations/userValidation");
+const { generateToken } = require("./jwtService");
 
 exports.signup = async (userDetails) => {
-  if (!userDetails.password || !userDetails.email) {
-    throw new Error("You must provide email and password");
-  }
-  userDetails.password = await encryptPassword(userDetails.password);
-  await userRepository.insertUser(userDetails);
+  const validation = await insertUserSchema.validateAsync(userDetails);
+  validation.password = await encryptPassword(validation.password);
+
+  await userRepository.insertUser(validation);
 };
 
 exports.login = async (email, password) => {
@@ -24,7 +28,9 @@ exports.login = async (email, password) => {
     throw new Error("Your password is incorrect");
   }
 
-  return user.toJSON();
+  const token = generateToken(user.id, user.email, user.role);
+
+  return token;
 };
 
 exports.getProfile = async (email) => {
@@ -37,11 +43,13 @@ exports.getAllProfiles = async () => {
 };
 
 exports.editProfile = async (id, userDetails) => {
-  if (!id || !userDetails) {
-    throw new Error("You must provide user ID and user data");
+  const validation = await updateSchema.validateAsync(userDetails);
+
+  if (validation.password) {
+    validation.password = await encryptPassword(validation.password);
   }
-  userDetails.password = await encryptPassword(userDetails.password);
-  await userRepository.updateUser(id, userDetails);
+
+  await userRepository.updateUser(id, validation);
 };
 
 exports.removeUser = async (id) => {

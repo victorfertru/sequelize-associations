@@ -24,7 +24,6 @@ exports.insertComment = async (comment) => {
   return await Comment.create(comment);
 };
 
-// TODO DELETE COMMENT
 exports.deleteComment = async (id) => {
   const commentId = await Comment.findByPk(id);
   if (!commentId) {

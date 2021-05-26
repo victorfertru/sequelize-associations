@@ -1,4 +1,3 @@
-const { createPool } = require("mysql2/promise");
 const commentRepository = require("../repositories/commentRepository");
 
 exports.getAllPosts = async () => {
